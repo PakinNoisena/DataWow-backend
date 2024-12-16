@@ -21,7 +21,7 @@ export class UsersController {
   async findUserByUsername(
     @Req() context: Request,
     @Param("username") username: string
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity | null> {
     const user = await this.userService.findUserByUsername(context, username);
 
     if (!user) {
@@ -38,18 +38,8 @@ export class UsersController {
   async signIn(
     @Req() context: Request,
     @Body() body: UserBodyDto
-  ): Promise<UserEntity> {
-    // find user to check exist
-    let user = await this.userService.findUserByUsername(
-      context,
-      body.username
-    );
-
-    // create if user not exist
-    if (!user) {
-      user = await this.userService.create(context, body);
-    }
-
+  ): Promise<UserEntity | null> {
+    const user = await this.userService.signIn(context, body);
     return user;
   }
 }

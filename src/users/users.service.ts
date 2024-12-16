@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { UserEntity } from "./../entities/user.entity";
@@ -23,9 +23,17 @@ export class UsersService {
     return user;
   }
 
-  async create(context: Request, body: UserBodyDto): Promise<UserEntity> {
-    const user = this.repo.create({ username: body.username });
-    await this.repo.save(user);
+  async signIn(
+    context: Request,
+    body: UserBodyDto
+  ): Promise<UserEntity | null> {
+    let user = await this.findUserByUsername(context, body.username);
+
+    // create if user not exist
+    if (!user) {
+      user = this.repo.create({ username: body.username });
+      await this.repo.save(user);
+    }
 
     return user;
   }
