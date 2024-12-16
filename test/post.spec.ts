@@ -3,11 +3,13 @@ import { PostService } from "../src/post/post.service";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { PostEntity } from "../src/entities/post.entity";
 import { CommentService } from "../src/comment/comment.service";
+import { CommunityEntity } from "../src/entities/community.entity";
 
 describe("PostService", () => {
   let service: PostService;
   let postRepoMock: any;
   let commentServiceMock: any;
+  let communityRepoMock: any;
 
   beforeEach(async () => {
     commentServiceMock = {
@@ -21,6 +23,12 @@ describe("PostService", () => {
       orderBy: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       getMany: jest.fn(),
+      findOne: jest.fn(),
+      save: jest.fn(),
+    };
+
+    communityRepoMock = {
+      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -33,6 +41,10 @@ describe("PostService", () => {
         {
           provide: CommentService,
           useValue: commentServiceMock,
+        },
+        {
+          provide: getRepositoryToken(CommunityEntity),
+          useValue: communityRepoMock, // Add the mock for CommunityEntityRepository here
         },
       ],
     }).compile();
