@@ -21,7 +21,7 @@ export class CommentEntity {
   @JoinColumn({ name: "commented_by" })
   commentedBy!: UserEntity;
 
-  @ManyToOne(() => PostEntity, { eager: true })
+  @ManyToOne(() => PostEntity, { eager: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "post" })
   post!: PostEntity;
 
