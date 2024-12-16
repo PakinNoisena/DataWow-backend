@@ -22,4 +22,17 @@ export class UsersService {
     });
     return user;
   }
+
+  async signIn(context: Request, body: UserBodyDto): Promise<UserEntity> {
+    // Check if the user exists
+    let user = await this.findUserByUsername(context, body.username);
+
+    // If not found, create a new user
+    if (!user) {
+      user = this.repo.create({ username: body.username });
+      await this.repo.save(user);
+    }
+
+    return user;
+  }
 }
