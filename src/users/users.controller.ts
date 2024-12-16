@@ -16,7 +16,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get("/:username")
-  async findOneUser(
+  async findUserByUsername(
     @Req() context: Request,
     @Param("username") username: string
   ): Promise<UserEntity> {
