@@ -29,4 +29,8 @@ export class CommentService {
 
     return comments;
   }
+
+  async deleteByPostId(postId: string): Promise<void> {
+    await this.commentRepo.delete({ post: { id: postId } });
+  }
 }
