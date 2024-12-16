@@ -6,9 +6,9 @@
   "scripts": {
     "start:dev": "nodemon --watch src --exec ts-node src/main.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm migration:generate -- -d src/data-source.ts --output-dir src/migrations",
-    "migration:run": "npm run typeorm migration:run -- -d src/data-source.ts",
-    "migration:revert": "npm run typeorm migration:revert -- -d src/data-source.ts"
+    "migration:create": "npm run typeorm migration:generate -- -d src/data-source.ts --output-dir src/migrations",
+    "migration:up": "npm run typeorm migration:run -- -d src/data-source.ts",
+    "migration:down": "npm run typeorm migration:revert -- -d src/data-source.ts"
   },
   "repository": {
     "type": "git",
