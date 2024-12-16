@@ -15,16 +15,16 @@ import { UserEntity } from "../entities/user.entity";
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Get("/:userName")
+  @Get("/:username")
   async findOneUser(
     @Req() context: Request,
-    @Param("userName") userName: string
+    @Param("username") username: string
   ): Promise<UserEntity> {
-    const user = await this.userService.findUserByUsername(context, userName);
+    const user = await this.userService.findUserByUsername(context, username);
 
     if (!user) {
       throw new NotFoundException({
-        message: `User with username '${userName}' not found`,
+        message: `User with username '${username}' not found`,
         messageCode: 1001,
       });
     }
