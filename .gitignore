@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Temporary files
+temp/
+tmp/
+.DS_Store
+
+# Docker overrides
+docker-compose.override.yml
+
+# Compiled migrations
+src/migrations/*.js
