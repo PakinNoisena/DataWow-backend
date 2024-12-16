@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Req } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Req,
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Request } from "express";
 import { UserEntity } from "../entities/user.entity";
@@ -12,6 +20,15 @@ export class UsersController {
     @Req() context: Request,
     @Param("userName") userName: string
   ): Promise<UserEntity> {
-    return await this.userService.findUserByUsername(context, userName);
+    const user = await this.userService.findUserByUsername(context, userName);
+
+    if (!user) {
+      throw new NotFoundException({
+        message: `User with username '${userName}' not found`,
+        messageCode: 1001,
+      });
+    }
+
+    return user;
   }
 }
