@@ -4,6 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "../users/users.module";
 import { ResponseFormat } from "../interceptors/response-format.interceptor";
 import { CommunityModule } from "../community/community.module";
+import { PostModule } from "../post/post.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CommunityModule } from "../community/community.module";
     }),
     UsersModule,
     CommunityModule,
+    PostModule,
   ],
   controllers: [],
   providers: [
