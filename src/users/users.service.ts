@@ -23,7 +23,7 @@ export class UsersService {
     return user;
   }
 
-  async signIn(context: Request, body: UserBodyDto): Promise<UserEntity> {
+  async create(context: Request, body: UserBodyDto): Promise<UserEntity> {
     // Check if the user exists
     let user = await this.findUserByUsername(context, body.username);
 
