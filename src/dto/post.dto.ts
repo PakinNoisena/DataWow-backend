@@ -1,5 +1,6 @@
 import { Expose } from "class-transformer";
 
+// Update this to reflect the type of comments
 export class PostRespDto {
   @Expose()
   id!: string;
@@ -28,4 +29,13 @@ export class PostRespDto {
   community!: {
     name: string;
   };
+
+  // Define the type of comments as an array of objects with the correct shape
+  @Expose()
+  comments: Array<{
+    id: string;
+    message: string;
+    createdAt: Date;
+    commentedBy: string; // assuming you want to include the commenter's username
+  }> = []; // Initialize as an empty array
 }
