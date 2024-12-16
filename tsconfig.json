@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2017",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "useDefineForClassFields": true
-  }
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }
