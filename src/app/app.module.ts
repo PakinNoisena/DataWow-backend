@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "../users/users.module";
 import { ResponseFormat } from "../interceptors/response-format.interceptor";
+import { CommunityModule } from "../community/community.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ResponseFormat } from "../interceptors/response-format.interceptor";
       synchronize: false,
     }),
     UsersModule,
+    CommunityModule,
   ],
   controllers: [],
   providers: [
