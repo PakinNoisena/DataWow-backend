@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  DeleteDateColumn,
 } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { CommunityEntity } from "./community.entity";
@@ -26,6 +27,9 @@ export class PostEntity {
 
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt!: Date;
+
+  @DeleteDateColumn({ name: "deleted_at", nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => UserEntity, { eager: true })
   @JoinColumn({ name: "owner" })

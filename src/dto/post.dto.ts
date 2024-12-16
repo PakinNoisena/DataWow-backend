@@ -17,6 +17,9 @@ export class PostRespDto {
   updatedAt!: Date;
 
   @Expose()
+  deletedAt?: Date;
+
+  @Expose()
   owner!: {
     username: string;
   };

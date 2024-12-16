@@ -22,6 +22,7 @@ export class PostService {
         "post.description",
         "post.createdAt",
         "post.updatedAt",
+        "post.deletedAt",
         "owner.username",
         "community.name",
       ])
