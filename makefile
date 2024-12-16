@@ -6,7 +6,7 @@ start:
 
 # Generate a new migration file
 migrate-create:
-	npm run typeorm migration:create -- -d src/data-source.ts src/migrations/$(name)
+	npm run typeorm migration:generate -- -d src/data-source.ts src/migrations/$(name)
 
 # Run pending migrations
 migrate-up:
