@@ -12,6 +12,7 @@ describe("CommentService", () => {
   beforeEach(async () => {
     const mockRepository = {
       find: jest.fn(),
+      delete: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -62,6 +63,19 @@ describe("CommentService", () => {
 
       // Check if the result matches the expected output
       expect(result).toEqual(mockComments);
+    });
+  });
+  describe("deleteByPostId", () => {
+    it.each`
+      caseName                              | postId     | expectedDeleteCallArgs
+      ${"should delete comments by postId"} | ${"post1"} | ${{ post: { id: "post1" } }}
+    `("should handle $caseName", async ({ postId, expectedDeleteCallArgs }) => {
+      commentRepo.delete = jest.fn().mockResolvedValue({});
+
+      await service.deleteByPostId(postId);
+
+      // Check that the 'delete' method was called with the correct arguments
+      expect(commentRepo.delete).toHaveBeenCalledWith(expectedDeleteCallArgs);
     });
   });
 });
