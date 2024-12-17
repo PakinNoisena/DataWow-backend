@@ -46,18 +46,13 @@ export class PostService {
     return posts;
   }
 
-  // async findOne(id: string): Promise<PostResponse> {
-  //   const postResult = await this.postRepo.findOne({ where: { id } });
-
-  // }
-
-  async findAll(search?: string): Promise<PostResponse[]> {
+  async findOneById(id: string): Promise<PostResponse> {
     const queryBuilder = this.postRepo
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.owner", "owner")
       .leftJoinAndSelect("post.community", "community")
-      .leftJoinAndSelect("post.comments", "comment") // Join comments here
-      .leftJoinAndSelect("comment.commentedBy", "commentedBy") // Join the commentedBy relation
+      .leftJoinAndSelect("post.comments", "comment")
+      .leftJoinAndSelect("comment.commentedBy", "commentedBy")
       .select([
         "post.id",
         "post.title",
@@ -71,8 +66,56 @@ export class PostService {
         "comment.id",
         "comment.message",
         "comment.createdAt",
-        "comment.commentedBy", // Include the full commentedBy object here
-        "commentedBy.username", // Fetch the username of the user who commented
+        "comment.commentedBy",
+        "commentedBy.username",
+      ])
+      .where("post.id = :id", { id })
+      .orderBy("post.createdAt", "DESC");
+
+    const post = await queryBuilder.getOne();
+
+    if (!post) {
+      throw new NotFoundException(POST_ERR.NOT_FOUND);
+    }
+
+    // Mapping the result to match the PostResponse structure
+    const { owner, community, comments, ...postData } = post;
+
+    return {
+      ...postData,
+      owner: { username: owner.username },
+      community: { id: community.id, name: community.name },
+      comments: comments.map((comment) => ({
+        id: comment.id,
+        message: comment.message,
+        createdAt: comment.createdAt,
+        commentedBy: comment.commentedBy.username,
+      })),
+    };
+  }
+
+  async findAll(search?: string): Promise<PostResponse[]> {
+    const queryBuilder = this.postRepo
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.owner", "owner")
+      .leftJoinAndSelect("post.community", "community")
+      .leftJoinAndSelect("post.comments", "comment")
+      .leftJoinAndSelect("comment.commentedBy", "commentedBy")
+      .select([
+        "post.id",
+        "post.title",
+        "post.description",
+        "post.createdAt",
+        "post.updatedAt",
+        "post.deletedAt",
+        "owner.username",
+        "community.name",
+        "community.id",
+        "comment.id",
+        "comment.message",
+        "comment.createdAt",
+        "comment.commentedBy",
+        "commentedBy.username",
       ])
       .orderBy("post.createdAt", "DESC");
 
@@ -93,7 +136,7 @@ export class PostService {
           id: comment.id,
           message: comment.message,
           createdAt: comment.createdAt,
-          commentedBy: comment.commentedBy.username, // Access the username directly here
+          commentedBy: comment.commentedBy.username,
         })),
       };
     });

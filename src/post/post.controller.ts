@@ -39,4 +39,10 @@ export class PostController {
   ): Promise<void> {
     await this.postService.delete(postId, userId);
   }
+
+  @Get("/:id")
+  async findOnePost(@Param("id") postId: string): Promise<PostResponse> {
+    const post = await this.postService.findOneById(postId);
+    return post;
+  }
 }
