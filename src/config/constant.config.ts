@@ -21,4 +21,8 @@ export const USER_ERR = {
     messageCode: 3001,
     message: `User with username '${username}' not found`,
   }),
+  USER_NOT_FOUND: {
+    messageCode: 3002,
+    message: "User not found",
+  },
 };
