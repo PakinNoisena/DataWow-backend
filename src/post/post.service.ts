@@ -22,6 +22,29 @@ export class PostService {
     private communityRepo: Repository<CommunityEntity>
   ) {}
 
+  private mergeCommentWithPostRespDto(
+    posts: PostRespDto[],
+    comments: CommentEntity[]
+  ): PostRespDto[] {
+    // Add comments to each post in postResults
+    posts.forEach((post) => {
+      // Filter comments for the current post
+      const postComments = comments.filter((com) => {
+        return com.post.id === post.id;
+      });
+
+      // Add the comments to the post if any
+      (post as any).comments = postComments.map((comment) => ({
+        id: comment.id,
+        message: comment.message,
+        createdAt: comment.createdAt,
+        commentedBy: comment.commentedBy.username,
+      }));
+    });
+
+    return posts;
+  }
+
   async findAll(search?: string): Promise<PostRespDto[]> {
     const queryBuilder = this.postRepo
       .createQueryBuilder("post")
@@ -62,23 +85,12 @@ export class PostService {
     // Get all comments
     const commentResults = await this.commentService.findAll(postIds);
 
-    // Add comments to each post in postResults
-    postResults.forEach((post) => {
-      // Filter comments for the current post
-      const postComments = commentResults.filter((com) => {
-        return com.post.id === post.id;
-      });
+    const mergeCommentWithPost = this.mergeCommentWithPostRespDto(
+      postResults,
+      commentResults
+    );
 
-      // Add the comments to the post if any
-      (post as any).comments = postComments.map((comment) => ({
-        id: comment.id,
-        message: comment.message,
-        createdAt: comment.createdAt,
-        commentedBy: comment.commentedBy.username,
-      }));
-    });
-
-    return postResults;
+    return mergeCommentWithPost;
   }
 
   async edit(
