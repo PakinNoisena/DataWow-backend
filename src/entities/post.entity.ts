@@ -7,9 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
   DeleteDateColumn,
+  OneToMany,
 } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { CommunityEntity } from "./community.entity";
+import { CommentEntity } from "./comment.entity";
 
 @Entity("posts")
 export class PostEntity {
@@ -38,4 +40,7 @@ export class PostEntity {
   @ManyToOne(() => CommunityEntity, { eager: true })
   @JoinColumn({ name: "community" })
   community!: CommunityEntity;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.post, { cascade: true })
+  comments!: CommentEntity[];
 }
