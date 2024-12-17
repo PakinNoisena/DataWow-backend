@@ -99,7 +99,7 @@ export class PostService {
     postId: string,
     userId: string,
     updateData: Partial<PostBodyDto>
-  ): Promise<PostRespDto> {
+  ): Promise<PostResponse> {
     // Find the post by ID
     const post = await this.postRepo.findOne({
       where: { id: postId },
@@ -136,22 +136,24 @@ export class PostService {
     // Save the updated post
     const updatedPost = await this.postRepo.save(post);
 
-    // Return the updated post data in PostRespDto format
-    return {
-      id: updatedPost.id,
-      title: updatedPost.title,
-      description: updatedPost.description,
-      createdAt: updatedPost.createdAt,
-      updatedAt: updatedPost.updatedAt,
-      deletedAt: updatedPost.deletedAt,
-      owner: {
-        username: updatedPost.owner.username,
-      },
+    // Get all comments
+    const commentResults = await this.commentService.findAll([updatedPost.id]);
+    const postResponse = {
+      ...updatedPost,
+      owner: { username: updatedPost.owner.username },
       community: {
+        id: updatedPost.community.id,
         name: updatedPost.community.name,
       },
-      comments: [], // Optionally populate comments if needed
+      comments: [] as PostComment[],
     };
+    const mergeCommentWithPost = this.mergeCommentWithPostRespDto(
+      [postResponse],
+      commentResults
+    );
+
+    // Return the updated post data in PostRespDto format
+    return mergeCommentWithPost[0];
   }
 
   async deleteCommentsByPostId(postId: string): Promise<void> {

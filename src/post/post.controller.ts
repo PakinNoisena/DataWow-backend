@@ -27,7 +27,7 @@ export class PostController {
     @Param("id") postId: string,
     @Headers("user-id") userId: string,
     @Body() updateData: Partial<PostBodyDto>
-  ): Promise<PostRespDto> {
+  ): Promise<PostResponse> {
     const updatedPost = await this.postService.edit(postId, userId, updateData);
     return updatedPost;
   }
