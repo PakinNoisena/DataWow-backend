@@ -11,7 +11,11 @@ export class CheckUserExistMiddleware implements NestMiddleware {
     const userId = req.headers["user-id"] || req.query["user-id"];
 
     if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        ...USER_ERR.USER_REQUIRED,
+      });
     }
 
     try {
@@ -28,7 +32,7 @@ export class CheckUserExistMiddleware implements NestMiddleware {
     } catch (error) {
       return res.status(404).json({
         success: false,
-        statusCode: 500,
+        statusCode: 404,
         ...USER_ERR.USER_NOT_FOUND,
       });
     }
