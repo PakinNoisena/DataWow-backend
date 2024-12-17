@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { UserEntity } from "./../entities/user.entity";
 import { Request } from "express";
 import { UserBodyDto } from "../dto/users.dto";
+import { USER_ERR } from "../config/constant.config";
 
 @Injectable()
 export class UsersService {
@@ -20,6 +21,20 @@ export class UsersService {
         username,
       },
     });
+    return user;
+  }
+
+  async findUserByUserId(id: string): Promise<UserEntity | null> {
+    const user = await this.repo.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(USER_ERR.USER_NOT_FOUND);
+    }
+
     return user;
   }
 

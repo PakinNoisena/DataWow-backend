@@ -7,12 +7,19 @@ import { CommentEntity } from "../entities/comment.entity";
 import { CommunityEntity } from "../entities/community.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityService } from "../community/community.service";
+import { UsersService } from "../users/users.service";
+import { UserEntity } from "../entities/user.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PostEntity, CommentEntity, CommunityEntity]),
+    TypeOrmModule.forFeature([
+      PostEntity,
+      CommentEntity,
+      CommunityEntity,
+      UserEntity,
+    ]),
   ],
   controllers: [PostController],
-  providers: [PostService, CommentService, CommunityService],
+  providers: [PostService, CommentService, CommunityService, UsersService],
 })
 export class PostModule {}

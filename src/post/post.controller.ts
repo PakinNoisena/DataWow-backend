@@ -7,9 +7,10 @@ import {
   Body,
   Headers,
   Delete,
+  Post,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
-import { PostUpdateBodyDto } from "../dto/post.dto";
+import { PostCreateBodyDto, PostUpdateBodyDto } from "../dto/post.dto";
 import { PostResponse } from "./post.interface";
 
 @Controller("/post")
@@ -44,5 +45,14 @@ export class PostController {
   async findOnePost(@Param("id") postId: string): Promise<PostResponse> {
     const post = await this.postService.findOneById(postId);
     return post;
+  }
+
+  @Post("/")
+  async createPost(
+    @Headers("user-id") userId: string,
+    @Body() createData: PostCreateBodyDto
+  ): Promise<PostResponse> {
+    const newPost = await this.postService.create(userId, createData);
+    return newPost;
   }
 }

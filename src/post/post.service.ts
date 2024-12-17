@@ -10,9 +10,10 @@ import { PostCreateBodyDto, PostUpdateBodyDto } from "../dto/post.dto";
 import { CommentEntity } from "../entities/comment.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
-import { COMMUNITY_ERR, POST_ERR } from "../config/constant.config";
+import { COMMUNITY_ERR, POST_ERR, USER_ERR } from "../config/constant.config";
 import { PostComment, PostResponse } from "./post.interface";
 import { CommunityService } from "../community/community.service";
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class PostService {
@@ -20,8 +21,8 @@ export class PostService {
     @InjectRepository(PostEntity)
     private postRepo: Repository<PostEntity>,
     private commentService: CommentService,
-    @InjectRepository(CommunityEntity)
-    private communityService: CommunityService
+    private communityService: CommunityService,
+    private userService: UsersService
   ) {}
 
   async findOneById(id: string): Promise<PostResponse> {
@@ -187,5 +188,34 @@ export class PostService {
 
     // Delete the post
     await this.postRepo.delete(postId);
+  }
+
+  async create(
+    userId: string,
+    createData: PostCreateBodyDto
+  ): Promise<PostResponse> {
+    const community = await this.communityService.findOneById(
+      createData.communityId
+    );
+
+    const user = await this.userService.findUserByUserId(userId);
+    if (!user) {
+      throw new NotFoundException(USER_ERR.USER_NOT_FOUND);
+    }
+
+    const postEntity = this.postRepo.create({
+      title: createData.title,
+      description: createData.description,
+      community: community,
+      owner: user,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const savedPost = await this.postRepo.save(postEntity);
+
+    const postResponse = await this.findOneById(savedPost.id);
+
+    return postResponse;
   }
 }
