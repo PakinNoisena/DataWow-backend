@@ -64,6 +64,6 @@ export class PostRespDto {
     id: string;
     message: string;
     createdAt: Date;
-    commentedBy: string; // assuming you want to include the commenter's username
-  }> = []; // Initialize as an empty array
+    commentedBy: string;
+  }> = [];
 }

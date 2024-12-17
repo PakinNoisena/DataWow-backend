@@ -10,6 +10,7 @@ import { PostBodyDto, PostRespDto } from "../dto/post.dto";
 import { CommentEntity } from "../entities/comment.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
+import { COMMUNITY_ERR, POST_ERR } from "../config/constant.config";
 
 @Injectable()
 export class PostService {
@@ -44,13 +45,13 @@ export class PostService {
 
     const posts = await queryBuilder.getMany();
 
-    const postResults = posts.map((post) => {
+    const postResults: PostRespDto[] = posts.map((post) => {
       const { owner, community, ...postData } = post;
       return {
         ...postData,
         owner: { username: owner.username },
         community: { name: community.name },
-        comments: [], // Initialize comments as an empty array
+        comments: [],
       };
     });
 
@@ -92,30 +93,21 @@ export class PostService {
     });
 
     if (!post) {
-      throw new NotFoundException({
-        message: `Post '${post}' not found`,
-        messageCode: 2001,
-      });
+      throw new NotFoundException(POST_ERR.NOT_FOUND);
     }
 
     // Check if the post owner matches the current user
     if (post.owner.id !== userId) {
-      throw new ForbiddenException({
-        message: `You are not the owner of this post`,
-        messageCode: 1002,
-      });
+      throw new ForbiddenException(POST_ERR.NOT_POST_OWNER);
     }
 
     // Check if the community exists and update it
     if (updateData.communityId) {
       const community = await this.communityRepo.findOne({
-        where: { id: updateData.communityId }, // Use the ID directly
+        where: { id: updateData.communityId },
       });
       if (!community) {
-        throw new NotFoundException({
-          message: "Community id  not found",
-          messageCode: 3001,
-        });
+        throw new NotFoundException(COMMUNITY_ERR.ID_NOT_FOUND);
       }
       post.community = community; // Update community
     }
@@ -159,17 +151,11 @@ export class PostService {
     });
 
     if (!post) {
-      throw new NotFoundException({
-        message: `Post '${postId}' not found`,
-        messageCode: 2001,
-      });
+      throw new NotFoundException(POST_ERR.NOT_FOUND);
     }
 
     if (post.owner.id !== userId) {
-      throw new ForbiddenException({
-        message: `You are not the owner of this post`,
-        messageCode: 1002,
-      });
+      throw new ForbiddenException(POST_ERR.NOT_POST_OWNER);
     }
 
     // Delete related comments

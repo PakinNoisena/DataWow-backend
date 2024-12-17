@@ -12,6 +12,7 @@ import { UsersService } from "./users.service";
 import { Request } from "express";
 import { UserEntity } from "../entities/user.entity";
 import { UserBodyDto } from "../dto/users.dto";
+import { USER_ERR } from "../config/constant.config";
 
 @Controller("/users")
 export class UsersController {
@@ -25,10 +26,7 @@ export class UsersController {
     const user = await this.userService.findUserByUsername(context, username);
 
     if (!user) {
-      throw new NotFoundException({
-        message: `User with username '${username}' not found`,
-        messageCode: 1001,
-      });
+      throw new NotFoundException(USER_ERR.USERNAME_NOT_FOUND(username));
     }
 
     return user;
