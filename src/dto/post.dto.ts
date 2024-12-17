@@ -2,7 +2,7 @@ import { Expose } from "class-transformer";
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-const PostBodySchema = z.object({
+const PostUpdateBodySchema = z.object({
   title: z
     .string()
     .min(1, "Username cannot be empty")
@@ -26,4 +26,4 @@ const PostBodySchema = z.object({
     .optional(),
 });
 
-export class PostBodyDto extends createZodDto(PostBodySchema) {}
+export class PostUpdateBodyDto extends createZodDto(PostUpdateBodySchema) {}

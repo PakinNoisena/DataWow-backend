@@ -9,7 +9,7 @@ import {
   Delete,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
-import { PostBodyDto, PostRespDto } from "../dto/post.dto";
+import { PostUpdateBodyDto } from "../dto/post.dto";
 import { PostResponse } from "./post.interface";
 
 @Controller("/post")
@@ -26,7 +26,7 @@ export class PostController {
   async editPost(
     @Param("id") postId: string,
     @Headers("user-id") userId: string,
-    @Body() updateData: Partial<PostBodyDto>
+    @Body() updateData: PostUpdateBodyDto
   ): Promise<PostResponse> {
     const updatedPost = await this.postService.edit(postId, userId, updateData);
     return updatedPost;

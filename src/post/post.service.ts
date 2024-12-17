@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PostEntity } from "../entities/post.entity";
-import { PostBodyDto, PostRespDto } from "../dto/post.dto";
+import { PostUpdateBodyDto } from "../dto/post.dto";
 import { CommentEntity } from "../entities/comment.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
@@ -98,7 +98,7 @@ export class PostService {
   async edit(
     postId: string,
     userId: string,
-    updateData: Partial<PostBodyDto>
+    updateData: PostUpdateBodyDto
   ): Promise<PostResponse> {
     // Find the post by ID
     const post = await this.postRepo.findOne({
