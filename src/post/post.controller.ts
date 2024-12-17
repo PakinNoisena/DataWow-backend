@@ -8,12 +8,15 @@ import {
   Headers,
   Delete,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { PostCreateBodyDto, PostUpdateBodyDto } from "../dto/post.dto";
 import { PostResponse } from "./post.interface";
+import { CheckUserExistMiddleware } from "../middleware/authorization.middleware";
 
 @Controller("/post")
+@UseGuards(CheckUserExistMiddleware)
 export class PostController {
   constructor(private postService: PostService) {}
 
