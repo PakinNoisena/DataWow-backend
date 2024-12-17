@@ -10,14 +10,14 @@ import {
 } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { PostBodyDto, PostRespDto } from "../dto/post.dto";
-import { PostEntity } from "../entities/post.entity";
+import { PostResponse } from "./post.interface";
 
 @Controller("/post")
 export class PostController {
   constructor(private postService: PostService) {}
 
   @Get("/")
-  async findAllPost(@Query("search") search?: string): Promise<PostRespDto[]> {
+  async findAllPost(@Query("search") search?: string): Promise<PostResponse[]> {
     const posts = await this.postService.findAll(search);
     return posts;
   }

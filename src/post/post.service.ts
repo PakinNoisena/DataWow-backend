@@ -11,6 +11,7 @@ import { CommentEntity } from "../entities/comment.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
 import { COMMUNITY_ERR, POST_ERR } from "../config/constant.config";
+import { PostComment, PostResponse } from "./post.interface";
 
 @Injectable()
 export class PostService {
@@ -23,9 +24,9 @@ export class PostService {
   ) {}
 
   private mergeCommentWithPostRespDto(
-    posts: PostRespDto[],
+    posts: PostResponse[],
     comments: CommentEntity[]
-  ): PostRespDto[] {
+  ): PostResponse[] {
     // Add comments to each post in postResults
     posts.forEach((post) => {
       // Filter comments for the current post
@@ -34,7 +35,7 @@ export class PostService {
       });
 
       // Add the comments to the post if any
-      (post as any).comments = postComments.map((comment) => ({
+      post.comments = postComments.map((comment) => ({
         id: comment.id,
         message: comment.message,
         createdAt: comment.createdAt,
@@ -45,7 +46,7 @@ export class PostService {
     return posts;
   }
 
-  async findAll(search?: string): Promise<PostRespDto[]> {
+  async findAll(search?: string): Promise<PostResponse[]> {
     const queryBuilder = this.postRepo
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.owner", "owner")
@@ -59,6 +60,7 @@ export class PostService {
         "post.deletedAt",
         "owner.username",
         "community.name",
+        "community.id",
       ])
       .orderBy("post.createdAt", "DESC");
 
@@ -68,13 +70,13 @@ export class PostService {
 
     const posts = await queryBuilder.getMany();
 
-    const postResults: PostRespDto[] = posts.map((post) => {
+    const postResults: PostResponse[] = posts.map((post) => {
       const { owner, community, ...postData } = post;
       return {
         ...postData,
         owner: { username: owner.username },
-        community: { name: community.name },
-        comments: [],
+        community: { id: community.id, name: community.name },
+        comments: [] as PostComment[],
       };
     });
 
