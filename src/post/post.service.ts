@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PostEntity } from "../entities/post.entity";
-import { PostUpdateBodyDto } from "../dto/post.dto";
+import { PostCreateBodyDto, PostUpdateBodyDto } from "../dto/post.dto";
 import { CommentEntity } from "../entities/comment.entity";
 import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
@@ -46,11 +46,18 @@ export class PostService {
     return posts;
   }
 
+  // async findOne(id: string): Promise<PostResponse> {
+  //   const postResult = await this.postRepo.findOne({ where: { id } });
+
+  // }
+
   async findAll(search?: string): Promise<PostResponse[]> {
     const queryBuilder = this.postRepo
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.owner", "owner")
       .leftJoinAndSelect("post.community", "community")
+      .leftJoinAndSelect("post.comments", "comment") // Join comments here
+      .leftJoinAndSelect("comment.commentedBy", "commentedBy") // Join the commentedBy relation
       .select([
         "post.id",
         "post.title",
@@ -61,6 +68,11 @@ export class PostService {
         "owner.username",
         "community.name",
         "community.id",
+        "comment.id",
+        "comment.message",
+        "comment.createdAt",
+        "comment.commentedBy", // Include the full commentedBy object here
+        "commentedBy.username", // Fetch the username of the user who commented
       ])
       .orderBy("post.createdAt", "DESC");
 
@@ -71,28 +83,22 @@ export class PostService {
     const posts = await queryBuilder.getMany();
 
     const postResults: PostResponse[] = posts.map((post) => {
-      const { owner, community, ...postData } = post;
+      const { owner, community, comments, ...postData } = post;
+
       return {
         ...postData,
         owner: { username: owner.username },
         community: { id: community.id, name: community.name },
-        comments: [] as PostComment[],
+        comments: comments.map((comment) => ({
+          id: comment.id,
+          message: comment.message,
+          createdAt: comment.createdAt,
+          commentedBy: comment.commentedBy.username, // Access the username directly here
+        })),
       };
     });
 
-    const postIds = postResults.map((post) => {
-      return post.id;
-    });
-
-    // Get all comments
-    const commentResults = await this.commentService.findAll(postIds);
-
-    const mergeCommentWithPost = this.mergeCommentWithPostRespDto(
-      postResults,
-      commentResults
-    );
-
-    return mergeCommentWithPost;
+    return postResults;
   }
 
   async edit(
