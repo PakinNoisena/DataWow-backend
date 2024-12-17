@@ -3,6 +3,8 @@ import { CommunityService } from "../src/community/community.service";
 import { CommunityEntity } from "../src/entities/community.entity";
 import { Repository } from "typeorm";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { NotFoundException } from "@nestjs/common";
+import { COMMUNITY_ERR } from "../src/config/constant.config";
 
 describe("CommunityService", () => {
   let service: CommunityService;
@@ -11,6 +13,7 @@ describe("CommunityService", () => {
   beforeEach(async () => {
     const repoMock = {
       find: jest.fn(),
+      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +51,35 @@ describe("CommunityService", () => {
 
         // Ensure the repository's find method was called
         expect(repo.find).toHaveBeenCalled();
+      }
+    );
+  });
+  describe("findOneById", () => {
+    it.each`
+      caseName                            | communityId | expectedResult                                       | expectedError
+      ${"should return community data"}   | ${1}        | ${{ id: 1, name: "History", createdAt: new Date() }} | ${null}
+      ${"should throw NotFoundException"} | ${999}      | ${null}                                              | ${COMMUNITY_ERR.ID_NOT_FOUND}
+    `(
+      "should handle $caseName correctly",
+      async ({ communityId, expectedResult, expectedError }) => {
+        if (expectedResult) {
+          repo.findOne = jest.fn().mockResolvedValue(expectedResult);
+        } else {
+          repo.findOne = jest.fn().mockResolvedValue(null);
+        }
+
+        if (expectedError) {
+          await expect(service.findOneById(communityId)).rejects.toThrowError(
+            new NotFoundException(expectedError)
+          );
+        } else {
+          const result = await service.findOneById(communityId);
+          expect(result).toEqual(expectedResult);
+        }
+
+        expect(repo.findOne).toHaveBeenCalledWith({
+          where: { id: communityId },
+        });
       }
     );
   });
