@@ -25,4 +25,8 @@ export const USER_ERR = {
     messageCode: 3002,
     message: "User not found",
   },
+  USER_REQUIRED: {
+    messageCode: 3003,
+    message: "User Id is required",
+  },
 };
