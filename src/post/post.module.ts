@@ -6,12 +6,13 @@ import { PostService } from "./post.service";
 import { CommentEntity } from "../entities/comment.entity";
 import { CommunityEntity } from "../entities/community.entity";
 import { CommentService } from "../comment/comment.service";
+import { CommunityService } from "../community/community.service";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PostEntity, CommentEntity, CommunityEntity]),
   ],
   controllers: [PostController],
-  providers: [PostService, CommentService],
+  providers: [PostService, CommentService, CommunityService],
 })
 export class PostModule {}

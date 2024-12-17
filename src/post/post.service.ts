@@ -12,6 +12,7 @@ import { CommentService } from "../comment/comment.service";
 import { CommunityEntity } from "../entities/community.entity";
 import { COMMUNITY_ERR, POST_ERR } from "../config/constant.config";
 import { PostComment, PostResponse } from "./post.interface";
+import { CommunityService } from "../community/community.service";
 
 @Injectable()
 export class PostService {
@@ -20,31 +21,8 @@ export class PostService {
     private postRepo: Repository<PostEntity>,
     private commentService: CommentService,
     @InjectRepository(CommunityEntity)
-    private communityRepo: Repository<CommunityEntity>
+    private communityService: CommunityService
   ) {}
-
-  private mergeCommentWithPostRespDto(
-    posts: PostResponse[],
-    comments: CommentEntity[]
-  ): PostResponse[] {
-    // Add comments to each post in postResults
-    posts.forEach((post) => {
-      // Filter comments for the current post
-      const postComments = comments.filter((com) => {
-        return com.post.id === post.id;
-      });
-
-      // Add the comments to the post if any
-      post.comments = postComments.map((comment) => ({
-        id: comment.id,
-        message: comment.message,
-        createdAt: comment.createdAt,
-        commentedBy: comment.commentedBy.username,
-      }));
-    });
-
-    return posts;
-  }
 
   async findOneById(id: string): Promise<PostResponse> {
     const queryBuilder = this.postRepo
@@ -164,15 +142,11 @@ export class PostService {
       throw new ForbiddenException(POST_ERR.NOT_POST_OWNER);
     }
 
-    // Check if the community exists and update it
     if (updateData.communityId) {
-      const community = await this.communityRepo.findOne({
-        where: { id: updateData.communityId },
-      });
-      if (!community) {
-        throw new NotFoundException(COMMUNITY_ERR.ID_NOT_FOUND);
-      }
-      post.community = community; // Update community
+      const community = await this.communityService.findOneById(
+        updateData.communityId
+      );
+      post.community = community;
     }
 
     // Update allowed fields (title, description, community)
@@ -183,26 +157,11 @@ export class PostService {
     post.updatedAt = new Date();
 
     // Save the updated post
-    const updatedPost = await this.postRepo.save(post);
+    await this.postRepo.save(post);
 
-    // Get all comments
-    const commentResults = await this.commentService.findAll([updatedPost.id]);
-    const postResponse = {
-      ...updatedPost,
-      owner: { username: updatedPost.owner.username },
-      community: {
-        id: updatedPost.community.id,
-        name: updatedPost.community.name,
-      },
-      comments: [] as PostComment[],
-    };
-    const mergeCommentWithPost = this.mergeCommentWithPostRespDto(
-      [postResponse],
-      commentResults
-    );
+    const results = await this.findOneById(postId);
 
-    // Return the updated post data in PostRespDto format
-    return mergeCommentWithPost[0];
+    return results;
   }
 
   async deleteCommentsByPostId(postId: string): Promise<void> {
