@@ -13,10 +13,9 @@ import {
 import { PostService } from "./post.service";
 import { PostCreateBodyDto, PostUpdateBodyDto } from "../dto/post.dto";
 import { PostResponse } from "./post.interface";
-import { CheckUserExistMiddleware } from "../middleware/authorization.middleware";
+import { CheckUserExistGuard } from "../guards/authorization.guard";
 
 @Controller("/post")
-@UseGuards(CheckUserExistMiddleware)
 export class PostController {
   constructor(private postService: PostService) {}
 
@@ -27,6 +26,7 @@ export class PostController {
   }
 
   @Put("/:id")
+  @UseGuards(CheckUserExistGuard)
   async editPost(
     @Param("id") postId: string,
     @Headers("user-id") userId: string,
@@ -37,6 +37,7 @@ export class PostController {
   }
 
   @Delete("/:id")
+  @UseGuards(CheckUserExistGuard)
   async deletePost(
     @Param("id") postId: string,
     @Headers("user-id") userId: string
@@ -51,6 +52,7 @@ export class PostController {
   }
 
   @Post("/")
+  @UseGuards(CheckUserExistGuard)
   async createPost(
     @Headers("user-id") userId: string,
     @Body() createData: PostCreateBodyDto

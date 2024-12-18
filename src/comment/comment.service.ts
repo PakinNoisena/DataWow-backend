@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
 import { CommentEntity } from "../entities/comment.entity";
-import { PostEntity } from "../entities/post.entity";
 
 @Injectable()
 export class CommentService {

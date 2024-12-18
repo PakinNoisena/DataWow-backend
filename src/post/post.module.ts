@@ -9,7 +9,6 @@ import { CommentService } from "../comment/comment.service";
 import { CommunityService } from "../community/community.service";
 import { UsersService } from "../users/users.service";
 import { UserEntity } from "../entities/user.entity";
-import { CheckUserExistMiddleware } from "../middleware/authorization.middleware";
 import { UsersModule } from "../users/users.module";
 
 @Module({
@@ -25,8 +24,4 @@ import { UsersModule } from "../users/users.module";
   controllers: [PostController],
   providers: [PostService, CommentService, CommunityService, UsersService],
 })
-export class PostModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CheckUserExistMiddleware).forRoutes(PostController);
-  }
-}
+export class PostModule {}
