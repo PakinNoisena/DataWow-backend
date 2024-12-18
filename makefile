@@ -2,7 +2,20 @@
 
 # Start the NestJS app in development mode
 start:
+	docker-compose up
+
+# Build docker image
+build:
 	docker-compose up --build
+
+# Rebuild docker image
+rebuild:
+	docker-compose down
+	docker-compose up --build
+
+# Shutdown docker container
+shutdown:
+	docker-compose down
 
 # Generate a new migration file
 migrate-create:
