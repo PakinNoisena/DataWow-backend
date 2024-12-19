@@ -20,8 +20,11 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get("/")
-  async findAllPost(@Query("search") search?: string): Promise<PostResponse[]> {
-    const posts = await this.postService.findAll(search);
+  async findAllPost(
+    @Query("search") search?: string,
+    @Query("community") community?: string
+  ): Promise<PostResponse[]> {
+    const posts = await this.postService.findAll(search, community);
     return posts;
   }
 

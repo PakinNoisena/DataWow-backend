@@ -73,7 +73,7 @@ export class PostService {
     };
   }
 
-  async findAll(search?: string): Promise<PostResponse[]> {
+  async findAll(search?: string, community?: string): Promise<PostResponse[]> {
     const queryBuilder = this.postRepo
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.owner", "owner")
@@ -100,6 +100,10 @@ export class PostService {
 
     if (search) {
       queryBuilder.where("post.title LIKE :title", { title: `%${search}%` });
+    }
+
+    if (community) {
+      queryBuilder.andWhere("post.community.id = :id", { id: community });
     }
 
     const posts = await queryBuilder.getMany();
