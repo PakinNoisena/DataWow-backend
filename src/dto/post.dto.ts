@@ -19,7 +19,6 @@ const PostUpdateBodySchema = z.object({
     .optional(),
   communityId: z
     .number()
-    .positive("Community ID must be greater than 0")
     .refine((value) => value !== null && value !== undefined, {
       message: "Community ID cannot be null or undefined",
     })
