@@ -155,10 +155,16 @@ export class PostService {
       throw new ForbiddenException(POST_ERR.NOT_POST_OWNER);
     }
 
-    if (updateData.communityId) {
+    if (
+      updateData.communityId !== undefined &&
+      updateData.communityId !== null
+    ) {
       const community = await this.communityService.findOneById(
         updateData.communityId
       );
+      if (!community) {
+        throw new NotFoundException(COMMUNITY_ERR.ID_NOT_FOUND);
+      }
       post.community = community;
     }
 
