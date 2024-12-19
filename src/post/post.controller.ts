@@ -22,9 +22,10 @@ export class PostController {
   @Get("/")
   async findAllPost(
     @Query("search") search?: string,
-    @Query("community") community?: string
+    @Query("community") community?: string,
+    @Query("userId") userId?: string
   ): Promise<PostResponse[]> {
-    const posts = await this.postService.findAll(search, community);
+    const posts = await this.postService.findAll(search, community, userId);
     return posts;
   }
 
