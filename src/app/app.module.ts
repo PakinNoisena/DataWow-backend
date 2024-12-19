@@ -5,6 +5,7 @@ import { UsersModule } from "../users/users.module";
 import { ResponseFormat } from "../interceptors/response-format.interceptor";
 import { CommunityModule } from "../community/community.module";
 import { PostModule } from "../post/post.module";
+import { CommentModule } from "../comment/comment.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PostModule } from "../post/post.module";
     UsersModule,
     CommunityModule,
     PostModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [
